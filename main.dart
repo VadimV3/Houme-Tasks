@@ -4,7 +4,7 @@ import 'dart:math';
 
 void main() {
   //Set user name
-  addUserToScore();
+  addUserName();
   //game flow
   gameFlow();
 }
@@ -15,15 +15,21 @@ List<String> gameElements = ['Rock', 'Scissor', 'Paper'];
 late String userName;
 var userChoice;
 var compChoice;
-Map<String, int> scores = {'Computer': 0};
+
+var userScore = 0;
+var compScore = 0;
 Map<int, String> gameItems = {1: 'Scissor', 2: 'Paper', 3: 'Rock'};
 
 //Flow
 void gameFlow() {
   while (userChooseHandler()) {
     //Comp pick item
-    compChoice = getRandomGameElement();
-    winConditions(userChoice, compChoice);
+    if (userChoice != null) {
+      compChoice = getRandomGameElement();
+      winConditions(userChoice, compChoice);
+    } else {
+      print('Bad input, try again');
+    }
   }
   print('Game Over!');
 }
@@ -33,12 +39,11 @@ String getRandomGameElement() {
   return gameElements[rand.nextInt(gameElements.length)];
 }
 
-void addUserToScore() {
+void addUserName() {
   print('Welcome to Game "Rock, Paper, Scissor" enter your name ');
   String? name = stdin.readLineSync();
-  if (name != null && name != '') {
+  if (name != null && name.isNotEmpty) {
     userName = name;
-    scores.addAll({'$name': 0});
   }
 }
 
@@ -53,37 +58,37 @@ bool userChooseHandler() {
   if (choosenNumber != null && gameItems.containsKey(choosenNumber)) {
     userChoice = gameItems[choosenNumber];
     return true;
+  } else if (!gameItems.containsKey(choosenNumber) && choosenNumber != 9) {
+    userChoice = null;
+    return true;
+  } else if (choosenNumber == 9) {
+    return false;
   } else {
     results();
-    return false;
   }
+  return false;
 }
 
 void winConditions(String userChoice, String compChoice) {
   if ((userChoice == 'Rock' && compChoice == 'Scissor') ||
       (userChoice == 'Paper' && compChoice == 'Rock') ||
       (userChoice == 'Scissor' && compChoice == 'Paper')) {
-    print('User Win!');
-    if (scores.containsKey(userName)) {
-      scores[userName] = scores[userName]! + 1;
-    } else if ((userChoice == 'Rock' && compChoice == 'Rock') ||
-        (userChoice == 'Paper' && compChoice == 'Paper') ||
-        (userChoice == 'Scissor' && compChoice == 'Scissor')) {
-      print('A draw win');
-    }
+    print('$userName Win!');
+    userScore++;
+  } else if (userChoice == compChoice) {
+    print('A draw win');
   } else {
-    scores['Computer'] = scores['Computer']! + 1;
     print('Computer Win!');
+    compScore++;
   }
   results();
 }
 
 void results() {
   print('-----------Result----------');
-  print('User pick $userChoice');
+  print('$userName pick $userChoice');
   print('Comp pick $compChoice');
-  scores.forEach((key, value) {
-    print('$key has $value scores');
-  });
+  print('$userName has $userScore scores');
+  print('Computer has $compScore scores');
   print('----------------------------');
 }
