@@ -10,33 +10,31 @@ void main() {
 }
 
 //Main data
-List<String> gameElements = ['Rock', 'Scissor', 'Paper'];
+//List<String> gameElements = ['Rock', 'Scissor', 'Paper'];
+enum GameElements { rock, paper, scissor }
 
 late String userName;
-var userChoice;
-var compChoice;
+late GameElements? userChoice;
+late GameElements compChoice;
 
 var userScore = 0;
 var compScore = 0;
-Map<int, String> gameItems = {1: 'Scissor', 2: 'Paper', 3: 'Rock'};
+//Map<int, String> gameItems = {1: 'Scissor', 2: 'Paper', 3: 'Rock'};
 
 //Flow
 void gameFlow() {
   while (userChooseHandler()) {
     //Comp pick item
-    if (userChoice != null) {
-      compChoice = getRandomGameElement();
-      winConditions(userChoice, compChoice);
-    } else {
-      print('Bad input, try again');
-    }
+    getRandomGameElement();
+    winConditions(userChoice, compChoice);
   }
   print('Game Over!');
 }
 
-String getRandomGameElement() {
+void getRandomGameElement() {
   Random rand = Random();
-  return gameElements[rand.nextInt(gameElements.length)];
+  int rndNumber = rand.nextInt(GameElements.values.length);
+  compChoice = GameElements.values[rndNumber];
 }
 
 void addUserName() {
@@ -49,45 +47,64 @@ void addUserName() {
 
 bool userChooseHandler() {
   print('$userName write  the number to choose element or input 9 to exit game');
-  gameItems.forEach((key, value) {
-    print('$key - $value');
-  });
+  for (var i = 0; i < GameElements.values.length; i++) {
+    print('${i + 1} - ${GameElements.values[i].name}');
+  }
   String? userPick = stdin.readLineSync();
   int? choosenNumber = int.tryParse(userPick ?? '');
 
-  if (choosenNumber != null && gameItems.containsKey(choosenNumber)) {
-    userChoice = gameItems[choosenNumber];
-    return true;
-  } else if (!gameItems.containsKey(choosenNumber) && choosenNumber != 9) {
-    userChoice = null;
-    return true;
-  } else if (choosenNumber == 9) {
-    return false;
-  } else {
-    results();
+  switch (choosenNumber) {
+    case 1:
+      userChoice = GameElements.rock;
+      break;
+    case 2:
+      userChoice = GameElements.paper;
+      break;
+    case 3:
+      userChoice = GameElements.scissor;
+      break;
+    case 9:
+      return false;
+    default:
+      print('Input Error try Again');
+      userChoice = null;
+      return true;
   }
-  return false;
+  return true;
 }
 
-void winConditions(String userChoice, String compChoice) {
-  if ((userChoice == 'Rock' && compChoice == 'Scissor') ||
-      (userChoice == 'Paper' && compChoice == 'Rock') ||
-      (userChoice == 'Scissor' && compChoice == 'Paper')) {
-    print('$userName Win!');
-    userScore++;
-  } else if (userChoice == compChoice) {
-    print('A draw win');
+void winConditions(GameElements? userInput, GameElements compChoice) {
+  if (userInput != null) {
+    userChoice = userInput;
+    //Draw Win Check
+    if (userChoice == compChoice) {
+      print('A draw win');
+      return;
+    }
+    //USer Win
+    if ((userChoice == GameElements.rock && compChoice == GameElements.scissor) ||
+        (userChoice == GameElements.paper && compChoice == GameElements.rock) ||
+        (userChoice == GameElements.scissor && compChoice == GameElements.paper)) {
+      print('$userName Win!');
+      userScore++;
+      //Comp Win
+    } else {
+      print('Computer Win!');
+      compScore++;
+    }
+    results();
   } else {
-    print('Computer Win!');
-    compScore++;
+    print('Check input');
   }
-  results();
 }
 
 void results() {
+  String userPick = userChoice.toString().split('.').last;
+  String compPick = compChoice.toString().split('.').last;
+
   print('-----------Result----------');
-  print('$userName pick $userChoice');
-  print('Comp pick $compChoice');
+  print('$userName pick $userPick');
+  print('Comp pick $compPick');
   print('$userName has $userScore scores');
   print('Computer has $compScore scores');
   print('----------------------------');
