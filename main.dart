@@ -10,7 +10,7 @@ void main() {
 }
 
 //Main data
-//List<String> gameElements = ['Rock', 'Scissor', 'Paper'];
+
 enum GameElements { rock, paper, scissor }
 
 late String userName;
@@ -19,7 +19,6 @@ late GameElements compChoice;
 
 var userScore = 0;
 var compScore = 0;
-//Map<int, String> gameItems = {1: 'Scissor', 2: 'Paper', 3: 'Rock'};
 
 //Flow
 void gameFlow() {
