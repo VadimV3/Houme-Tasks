@@ -1,118 +1,111 @@
 import 'dart:io';
 
 void main() {
-  Map<String, dynamic> data = checkInput();
-
-  String wordData = data['word'];
-  LanguageChoice langData = data['lang'];
-  int numberData = data['number'];
-
-  WordSplitter wordSplitter = WordSplitter(wordData, numberData, langData);
-  wordSplitter.printFinalString();
-  wordSplitter.countVowelLetters();
-  wordSplitter.findCoolestPart();
+  checkInput((word, splitCount, userLang) {
+    var lang = userLang;
+    var partsOfWord = splitWord(word, splitCount);
+    printFinalString(partsOfWord);
+    countVowelLetters(partsOfWord, lang);
+    findCoolestPart(partsOfWord, lang);
+  });
 }
 
-enum LanguageChoice { english, ukranian }
+enum LanguageChoice { english, ukrainian }
 
-class WordSplitter {
-  String? word;
-  int? countOfSymbols;
-  String _result = '';
+String? word;
+int? countOfSymbols;
+String _result = '';
+
+LanguageChoice choiceLang = LanguageChoice.english;
+
+const ukrainianVowels = "АЕЄИІЇОУЮЯ";
+const englishVowels = "AEIOU";
+
+//Task 1
+List<String> splitWord(String word, int countOfSymbols) {
   List<String> partOfWord = [];
-  LanguageChoice choiceLang = LanguageChoice.english;
 
-  String ukrainianVowels = "АЕЄИІЇОУЮЯ";
-  String englishVowels = "AEIOU";
-
-  WordSplitter(this.word, this.countOfSymbols, this.choiceLang) {
-    _splitWord();
+  if (word == null || countOfSymbols == null || word.isEmpty || countOfSymbols <= 0) {
+    return partOfWord;
   }
-
-  void _splitWord() {
-    if (this.word == null ||
-        this.countOfSymbols == null ||
-        this.word!.isEmpty ||
-        this.countOfSymbols! <= 0) {
-      return;
-    }
-    for (int i = 0; i < this.word!.length; i += this.countOfSymbols!) {
-      int endIndex;
-      if (i + this.countOfSymbols! <= word!.length) {
-        endIndex = i + this.countOfSymbols!;
-      } else {
-        endIndex = word!.length;
-      }
-      String part = this.word!.substring(i, endIndex);
-      if (part.length < this.countOfSymbols!) {
-        part = part + '*';
-      }
-      partOfWord.add(part);
-    }
-  }
-
-  void countVowelLetters() {
-    Map<String, int> vowelLetterCountResult = {};
-    String vowelsLetters = '';
-    if (choiceLang == LanguageChoice.english) {
-      vowelsLetters = englishVowels;
+  for (int i = 0; i < word.length; i += countOfSymbols) {
+    int endIndex;
+    if (i + countOfSymbols <= word.length) {
+      endIndex = i + countOfSymbols;
     } else {
-      vowelsLetters = ukrainianVowels;
+      endIndex = word.length;
     }
-
-    for (var i = 0; i < partOfWord.length; i++) {
-      String partStr = partOfWord[i].toUpperCase();
-
-      int count = partStr.split('').where((char) => vowelsLetters.contains(char)).length;
-
-      vowelLetterCountResult[partStr] = count;
+    String part = word.substring(i, endIndex);
+    if (part.length < countOfSymbols) {
+      part = part + '*';
     }
-    print(vowelLetterCountResult);
+    partOfWord.add(part);
+  }
+  return partOfWord;
+}
+
+void printFinalString(List<String> partOfWord) {
+  List<String> wordParts = partOfWord;
+  _result = wordParts.join('-');
+  int len = _result.length;
+  if (_result.substring(len - 1, len) == '-') {
+    _result = _result.substring(0, len - 1);
+  }
+  print(_result);
+}
+
+//Task 2
+
+void countVowelLetters(List<String> partsOfWord, LanguageChoice choiceLang) {
+  Map<String, int> vowelLetterCountResult = {};
+  String vowelsLetters = '';
+  if (choiceLang == LanguageChoice.english) {
+    vowelsLetters = englishVowels;
+  } else {
+    vowelsLetters = ukrainianVowels;
   }
 
-  void findCoolestPart() {
-    Map<String, String> scoreData = {};
-    int score = 0;
-    String vowelsLetters = '';
+  for (var i = 0; i < partsOfWord.length; i++) {
+    String partStr = partsOfWord[i].toUpperCase();
 
-    if (choiceLang == LanguageChoice.english) {
-      vowelsLetters = englishVowels;
-    } else {
-      vowelsLetters = ukrainianVowels;
-    }
-    //iterate list
-    for (var i = 0; i < partOfWord.length; i++) {
-      String partStr = partOfWord[i].toString().toUpperCase();
-      //iterate String of list
-      for (var k = 0; k < partStr.length; k++) {
-        String letter = partStr[k].toUpperCase();
-        if (vowelsLetters.contains(letter)) {
-          score += vowelsLetters.indexOf(letter) + 1;
-        }
+    int count = partStr.split('').where((char) => vowelsLetters.contains(char)).length;
+
+    vowelLetterCountResult[partStr] = count;
+  }
+  print(vowelLetterCountResult);
+}
+
+//Task 3
+
+void findCoolestPart(List<String> partOfWord, LanguageChoice choiceLang) {
+  Map<String, String> scoreData = {};
+  int score = 0;
+  String vowelsLetters = '';
+
+  if (choiceLang == LanguageChoice.english) {
+    vowelsLetters = englishVowels;
+  } else {
+    vowelsLetters = ukrainianVowels;
+  }
+  for (var i = 0; i < partOfWord.length; i++) {
+    String partStr = partOfWord[i].toString().toUpperCase();
+    for (var k = 0; k < partStr.length; k++) {
+      String letter = partStr[k].toUpperCase();
+      if (vowelsLetters.contains(letter)) {
+        score += vowelsLetters.indexOf(letter) + 1;
       }
-      scoreData[partStr] = '$score scores';
-      score = 0;
     }
-
-    print(scoreData);
+    scoreData[partStr] = '$score scores';
+    score = 0;
   }
-
-  void printFinalString() {
-    List<String> wordParts = partOfWord;
-    this._result = wordParts.join('-');
-    int len = _result.length;
-    if (_result.substring(len - 1, len) == '-') {
-      _result = _result.substring(0, len - 1);
-    }
-    print(_result);
-  }
+  print(scoreData);
 }
 
 //Uer Flow
 
-Map<String, dynamic> checkInput() {
+void checkInput(Function(String userWord, int splitNumber, LanguageChoice lang) complition) {
   Map<String, dynamic> result = {};
-  LanguageChoice lang = LanguageChoice.ukranian;
+  LanguageChoice lang = LanguageChoice.ukrainian;
   String word = '';
   int splitNumber = 0;
   print('Choose your Language \n1- en \n2 - uk \n');
@@ -133,7 +126,7 @@ Map<String, dynamic> checkInput() {
     if (langNum == 1) {
       lang = LanguageChoice.english;
     } else {
-      lang = LanguageChoice.ukranian;
+      lang = LanguageChoice.ukrainian;
     }
   }
 
@@ -163,8 +156,5 @@ Map<String, dynamic> checkInput() {
   String? userNumber = stdin.readLineSync() ?? '';
   splitNumber = int.parse(userNumber);
 
-  result['word'] = word;
-  result['lang'] = lang;
-  result['number'] = splitNumber;
-  return result;
+  return complition(word, splitNumber, lang);
 }
