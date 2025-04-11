@@ -42,12 +42,13 @@ List<String> splitWord(String word, int countOfSymbols) {
 
 void printFinalString(List<String> partOfWord) {
   List<String> wordParts = partOfWord;
-  _result = wordParts.join('-');
-  int len = _result.length;
-  if (_result.substring(len - 1, len) == '-') {
-    _result = _result.substring(0, len - 1);
+  String result = '';
+  result = wordParts.join('-');
+  int len = result.length;
+  if (result.substring(len - 1, len) == '-') {
+    result = result.substring(0, len - 1);
   }
-  print(_result);
+  print(result);
 }
 
 //Task 2
