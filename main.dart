@@ -12,10 +12,6 @@ void main() {
 
 enum LanguageChoice { english, ukrainian }
 
-String? word;
-int? countOfSymbols;
-String _result = '';
-
 LanguageChoice choiceLang = LanguageChoice.english;
 
 const ukrainianVowels = "АЕЄИІЇОУЮЯ";
