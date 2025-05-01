@@ -58,41 +58,66 @@ n (не більше 30), протягом яких він записує сві
 
  */
 import 'dart:core';
+import 'dart:io';
+import 'dart:math';
 
 void main() {
-  var i = userInputHandler();
-  print(i);
-}
-
-void userFlow() {
-  while (countDays == 0) {}
+  startGame();
 }
 
 const int userSoupsLimitPerDay = 2;
-const int countDays = 30;
+const int countDays = 5;
 final List<String> usersList = [];
 final Map<int, String> soupCounter = {};
+Map<String, List<Map<int, String>>> userData = {};
+
+const Map<int, String> soups = {
+  1: '«Борщ»',
+  2: '«Солянка»',
+  3: '«Розсольник»',
+  4: '«Грибний суп»',
+  5: '«Том Ям»',
+  6: '«Курячий бульйон»',
+  7: '«Суп-пюре з гарбуза»',
+};
+
+//Main UserFlow
+void startGame() {
+  var dayCounter = 1;
+  var soupId = 0;
+  String userName = '';
+  String? _userInput = createNewUser();
+  if (_userInput == null) {
+    print('Помилка при вводі імені, повторіть спробу');
+    _userInput = createNewUser();
+  }
+  userName = _userInput!;
+  while (dayCounter <= countDays) {
+    soupId = userInputHandler(soups);
+    if (soupId > 0 && soupId <= soups.length) {
+      //Fill user data
+      userData[userName] ??= [];
+      userData[userName]!.add({dayCounter: soups[soupId]!});
+      dayCounter++;
+      print(userData);
+    } else {
+      print('Помилка при вводі меню');
+    }
+  }
+  //Show popular soup
+  String popularSoup = getMostCommonSoupPick(userName, showStatistics: true);
+  print('Най популярніша страва це $popularSoup');
+}
 
 //User
-int userInputHandler() {
-  const Map<int, String> soups = {
-    1: '«Борщ»',
-    2: '«Солянка»',
-    3: '«Розсольник»',
-    4: '«Грибний суп»',
-    5: '«Том Ям»',
-    6: '«Курячий бульйон»',
-    7: '«Суп-пюре з гарбуза»',
-  };
-
+int userInputHandler(Map<int, String> menuData) {
   int userChoice = 0;
 
   print('Обери суп. Введи його номер в меню');
   soups.forEach((k, v) {
     print('$k - $v');
   });
-  //String? userInput = stdin.readLineSync();
-  String? userInput = '1';
+  String? userInput = stdin.readLineSync();
   if (userInput != null && userInput.isNotEmpty) {
     try {
       userChoice = int.parse(userInput);
@@ -108,4 +133,46 @@ int userInputHandler() {
     }
   }
   return userChoice;
+}
+
+String? createNewUser() {
+  print('Ведить своє ім`я');
+  String? userName = stdin.readLineSync();
+  if (userName != null && userName.isNotEmpty) {
+    return userName;
+  }
+  return null;
+}
+
+String getMostCommonSoupPick(String dataKey, {bool showStatistics = false}) {
+  Map<String, int> countSoups = {};
+  String result = '';
+  var soupMaps = userData[dataKey];
+  if (soupMaps == null || soupMaps.isEmpty) {
+    return 'Нема данных';
+  }
+  List<String> soupList = soupMaps.expand((item) => item.values).toList();
+
+  for (String soup in soupList) {
+    if (countSoups.containsKey(soup)) {
+      countSoups[soup] = countSoups[soup]! + 1;
+    } else {
+      countSoups[soup] = 1;
+    }
+  }
+  if (showStatistics) {
+    print('Статистика по вибору страв за період.');
+    countSoups.forEach((k, v) {
+      print('$v обрано разів - $k');
+    });
+  }
+  int maxScore = countSoups.values.reduce(max);
+  int minScore = countSoups.values.reduce(min);
+  if (maxScore > minScore) {
+    result = countSoups.entries.firstWhere((entry) => entry.value == maxScore).key;
+  } else {
+    print('Улюбленої страви немає');
+    result = '(не обрано)';
+  }
+  return result;
 }
