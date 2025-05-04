@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dbce07e0-b18d-4217-84ad-39f4557efeb8" name="Changes" comment="test">
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/coverage/test/soups_test.dart.vm.json" beforeDir="false" afterPath="$PROJECT_DIR$/coverage/test/soups_test.dart.vm.json" afterDir="false" />
+    <list default="true" id="dbce07e0-b18d-4217-84ad-39f4557efeb8" name="Changes" comment="V1 work version">
+      <change afterPath="$PROJECT_DIR$/lib/data/soup_data.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/statistics.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/soups.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/soups.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/soups_test.dart" beforeDir="false" afterPath="$PROJECT_DIR$/test/soups_test.dart" afterDir="false" />
     </list>
@@ -19,7 +19,19 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Dart File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="soups" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -32,6 +44,16 @@
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/VadimV3/Houme-Tasks.git&quot;,
     &quot;accountId&quot;: &quot;6bc8aa0f-0360-4cee-85c5-35efd59ff6fa&quot;
+  },
+  &quot;recentNewPullRequestHead&quot;: {
+    &quot;server&quot;: {
+      &quot;useHttp&quot;: false,
+      &quot;host&quot;: &quot;github.com&quot;,
+      &quot;port&quot;: null,
+      &quot;suffix&quot;: null
+    },
+    &quot;owner&quot;: &quot;VadimV3&quot;,
+    &quot;repository&quot;: &quot;Houme-Tasks&quot;
   }
 }</component>
   <component name="ProjectColorInfo">{
@@ -55,12 +77,17 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "soups",
+    "git-widget-placeholder": "#7 on soups",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/vadim/FlutterProjects/Soups/soups",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib" />
+    </key>
+  </component>
   <component name="RunManager" selected="Dart Command Line App.soups.dart">
     <configuration name="soups.dart" type="DartCommandLineRunConfigurationType" factoryName="Dart Command Line Application" temporary="true" nameIsGenerated="true">
       <option name="filePath" value="$PROJECT_DIR$/lib/soups.dart" />
@@ -96,7 +123,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745857595209</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="V1 work version">
+      <option name="closed" value="true" />
+      <created>1746122533939</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746122533939</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -112,6 +147,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="V1 work version" />
+    <option name="LAST_COMMIT_MESSAGE" value="V1 work version" />
   </component>
 </project>

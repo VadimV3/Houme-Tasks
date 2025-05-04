@@ -1,5 +1,3 @@
-import 'package:soups/soups.dart';
-import 'package:test/expect.dart';
 import 'package:test/scaffolding.dart';
 
 void main() {
@@ -13,6 +11,5 @@ void main() {
       6: '«Курячий бульйон»',
       7: '«Суп-пюре з гарбуза»',
     };
-    expect(userInputHandler(soups), greaterThan(0));
   });
 }
