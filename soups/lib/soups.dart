@@ -4,9 +4,10 @@ import 'package:soups/data/soup_data.dart';
 import 'package:soups/statistics.dart';
 
 void main() {
-  var i = addUserMenu();
-  var result = convertIdToNameOfDish(i, 'v', dishData);
-  print(result);
+  var mainData = addUserMenu();
+  String userName = mainData.keys.first;
+  var data = convertIdToNameOfDish(mainData, userName, dishData);
+  programMenu(data);
 }
 
 const int daysCount = 5;
@@ -61,11 +62,27 @@ Map<String, Map<int, List<int>>> addUserMenu() {
   return userData;
 }
 
-void programMenu() {
+void programMenu(Map<int, List<String>> data) {
   print('Меню програми!');
   print(
-    '1 - Показати вибір користувачів'
-    '2 - Показати рекламу напуполярнішої страви'
-    '3 - Показати меню',
+    '1 - Показати статистику по вибору користувачів\n'
+    '2 - Показати рекламу напуполярнішої страви\n'
+    '3 - Показати меню\n',
   );
+
+  String userInput = stdin.readLineSync() ?? ' ';
+  int? userChoice = int.tryParse(userInput);
+  if (userChoice != null) {
+    switch (userChoice) {
+      case 1:
+        break;
+      case 2:
+        countDishAndShowStats(data);
+        break;
+      case 3:
+        break;
+      default:
+        break;
+    }
+  }
 }
