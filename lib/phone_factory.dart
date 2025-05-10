@@ -1,16 +1,15 @@
 // TODO: Write task condition.
 
 void main() {
-  // TODO: Rename firstDetailCount
-  int firstDetail = findDetail(inputData, '*', '.');
+  int firstDetailCount = findDetail(inputData, '*', '.');
   // TODO: Rename firstDetailCount
   int secondDetail = findDetail(inputData, ':', null);
 
   // TODO: Make user friendly.
-  print(firstDetail);
+  print(firstDetailCount);
   print(secondDetail);
 
-  int phoneCount = createPhone(firstDetail, secondDetail);
+  int phoneCount = createPhone(firstDetailCount, secondDetail);
   print('Phone created is $phoneCount');
 }
 
