@@ -1,6 +1,12 @@
+// TODO: Write task condition.
+
 void main() {
+  // TODO: Rename firstDetailCount
   int firstDetail = findDetail(inputData, '*', '.');
+  // TODO: Rename firstDetailCount
   int secondDetail = findDetail(inputData, ':', null);
+
+  // TODO: Make user friendly.
   print(firstDetail);
   print(secondDetail);
 
@@ -14,12 +20,18 @@ const inputData = [
   '*.**::::**..*::.*…**.*::',
 ];
 
+// TODO: Rename getDetailsCount
+// TODO: Rename firstDetailChar
+// TODO: Rename secondDetailChar
 int findDetail(List<String> inputData, String firstDetailPart, String? secondDetailPart) {
   int counter = 0;
   String firstChar;
   String secondChar;
 
+  assert(firstDetailPart.length == 1, 'Use one symbol');
+
   for (String dataPart in inputData) {
+    // TODO: Reactor range
     for (int i = 0; i < dataPart.length - 1; i++) {
       if (secondDetailPart == null) {
         firstChar = dataPart[i];
@@ -38,6 +50,7 @@ int findDetail(List<String> inputData, String firstDetailPart, String? secondDet
   return counter;
 }
 
+// TODO: calculatePhoneCount
 int createPhone(int firstDetailCount, int secondDetailCount) {
   int phoneCount = 0;
   bool cheker = true;
