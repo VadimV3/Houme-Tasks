@@ -1,3 +1,85 @@
+// Введіть кількість днів (від 1 до 30): 33
+// Неправильне значення. Спробуйте ще раз.
+// Введіть кількість днів (від 1 до 30): 5
+//
+// Введіть супи, які ви обрали на день 1 (числа від 1 до 7 через пробіл): 1 3
+// Введіть супи, які ви обрали на день 2 (числа від 1 до 7 через пробіл): 2
+// Введіть супи, які ви обрали на день 3 (числа від 1 до 7 через пробіл): 3 1 6
+// Введіть супи, які ви обрали на день 4 (числа від 1 до 7 через пробіл): 5 7
+// Введіть супи, які ви обрали на день 5 (числа від 1 до 7 через пробіл): 1 1
+//
+// Супи, обрані користувачем:
+// День 1: Борщ, Розсольник
+// День 2: Солянка
+// День 3: Розсольник, Борщ, Курячий бульйон
+// День 4: Том Ям, Суп-пюре з гарбуза
+// День 5: Борщ, Борщ
+//
+// Статистика вибору супів:
+// Борщ — 5 раз(ів)
+// Солянка — 1 раз(ів)
+// Розсольник — 2 раз(ів)
+// Грибний суп — 0 раз(ів)
+// Том Ям — 1 раз(ів)
+// Курячий бульйон — 1 раз(ів)
+// Суп-пюре з гарбуза — 1 раз(ів)
+//
+// Найпопулярніший суп: Борщ!
+//
+// +---------------------------------------------+
+// |           НАЙПОПУЛЯРНІШИЙ СУП ДНЯ           |
+// +---------------------------------------------+
+// | Назва:         Борщ                         |
+// | Вибрано разів: 5                            |
+// | Опис:          Справжній смак традицій!     |
+// |                Смакуй, як вдома!            |
+// +---------------------------------------------+
+//
+// Наше меню супів на тиждень згідно з уподобань гурмана:
+// Понеділок — Борщ
+// Вівторок — Розсольник
+// Середа — Курячий бульйон
+// Четвер — Суп-пюре з гарбуза
+// П’ятниця — Солянка
+// Субота — Том Ям
+// Неділя — Борщ
+//
+// Оцінки від наших відвідувачів:
+//
+// День 1:
+// Клієнт Вітя — 6
+// Клієнт Коля — 3
+// Клієнт Алекс — 8
+//
+// День 2:
+// Клієнт Вітя — 9
+// Клієнт Коля — 6
+// Клієнт Алекс — 6
+//
+// День 3:
+// Клієнт Вітя — 10
+// Клієнт Коля — 5
+// Клієнт Алекс — 9
+//
+// День 4:
+// Клієнт Вітя — 7
+// Клієнт Коля — 4
+// Клієнт Алекс — 10
+//
+// День 5:
+// Клієнт Вітя — 6
+// Клієнт Коля — 6
+// Клієнт Алекс — 7
+//
+// День 6:
+// Клієнт Вітя — 9
+// Клієнт Коля — 2
+// Клієнт Алекс — 10
+//
+// День 7:
+// Клієнт Вітя — 6
+// Клієнт Коля — 1
+// // Клієнт Алекс — 10
 import 'dart:io';
 
 void main() {
@@ -25,7 +107,7 @@ List<int> pickDish() {
       if (numberDish >= 1 && numberDish <= dishData.length) {
         userPick.add(numberDish);
       } else {
-        print('Ви ввели непраильне значення спробуйте ще раз');
+        print('Ви ввели неправельні значення спробуйте ще раз');
       }
     }
   }
@@ -60,26 +142,33 @@ Map<String, Map<int, List<int>>> addUserMenu() {
 }
 
 void programMenu(Map<int, List<String>> data) {
-  print('Меню програми!');
-  print(
-    '1 - Показати статистику по вибору користувачів\n'
-    '2 - Показати рекламу напуполярнішої страви\n'
-    '3 - Показати меню\n',
-  );
+  bool isRun = true;
+  while (isRun) {
+    print('Меню програми!');
+    print(
+      '1 - Показати статистику по вибору користувача\n'
+      '2 - Показати рекламу напуполярнішої страви\n'
+      '3 - Вихід\n',
+    );
 
-  String userInput = stdin.readLineSync() ?? ' ';
-  int? userChoice = int.tryParse(userInput);
-  if (userChoice != null) {
-    switch (userChoice) {
-      case 1:
-        break;
-      case 2:
-        countDishAndShowStats(data);
-        break;
-      case 3:
-        break;
-      default:
-        break;
+    String userInput = stdin.readLineSync() ?? ' ';
+    int? userChoice = int.tryParse(userInput);
+    Map<String, int> soupCountData = calculateDish(data);
+
+    if (userChoice != null) {
+      switch (userChoice) {
+        case 1:
+          calculateSoupsByDay(soupCountData);
+          break;
+        case 2:
+          showCountAndAdsSoup(soupCountData);
+          break;
+        case 3:
+          isRun = false;
+          break;
+        default:
+          break;
+      }
     }
   }
 }
@@ -118,7 +207,6 @@ Map<int, List<String>> convertIdToNameOfDish(
     if (userMenu != null) {
       int daysCount = userMenu.keys.length;
       for (int i = 1; i <= daysCount; i++) {
-        print('${userMenu[i]}\n');
         List<int> menuList = userMenu[i]!;
         for (int k = 0; k <= menuList.length - 1; k++) {
           int dishID = menuList[k];
@@ -135,7 +223,7 @@ Map<int, List<String>> convertIdToNameOfDish(
   return translatedData;
 }
 
-void countDishAndShowStats(Map<int, List<String>> data) {
+Map<String, int> calculateDish(Map<int, List<String>> data) {
   Map<String, int> result = {};
   for (int i = 1; i <= data.keys.length; i++) {
     if (data[i] != null) {
@@ -150,6 +238,10 @@ void countDishAndShowStats(Map<int, List<String>> data) {
       }
     }
   }
+  return result;
+}
+
+void showCountAndAdsSoup(Map<String, int> result) {
   print('Статистика вибору супів:\n');
   int maxValue = 0;
   String maxKey = '';
@@ -160,10 +252,40 @@ void countDishAndShowStats(Map<int, List<String>> data) {
       maxKey = k;
     }
   });
+  print('          РЕКЛАМА!              \n');
   print('+----------------------------------+');
   print('|    НАЙПОПУЛЯРНІШИЙ СУП ДНЯ       |');
   print('|Назва: $maxKey');
   print('|Выбрано разів: $maxValue');
   print('|Опис:${adsDishTexts[maxKey]}');
   print('+----------------------------------+');
+}
+
+void calculateSoupsByDay(Map<String, int> soupData) {
+  Map<String, String> soupByDay = {
+    'Понеділок': '',
+    'Вівторок': '',
+    'Середа': '',
+    'Четвер': '',
+    'П`ятниця': '',
+    'Суббота': '',
+    'Неділя': '',
+  };
+  List<MapEntry<String, int>> sortedEntry = soupData.entries.toList();
+  sortedEntry.sort((a, b) => b.value.compareTo(a.value));
+  List<String> sortedSoupsByFrequency = sortedEntry.map((e) => e.key).toList();
+  int index = 0;
+  for (String day in soupByDay.keys) {
+    if (index < sortedSoupsByFrequency.length) {
+      soupByDay[day] = sortedSoupsByFrequency[index];
+      index++;
+    } else {
+      soupByDay[day] = '-';
+    }
+  }
+  print('--------------МЕНЮ НА ТИЖДЕНЬ---------------');
+
+  soupByDay.forEach((day, soup) {
+    print('В $day - $soup');
+  });
 }
