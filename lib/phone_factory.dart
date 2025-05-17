@@ -1,17 +1,49 @@
-// TODO: Write task condition.
+// Треба зробити фабрику з виробництва смартфонів.
+//
+// Наша фабрика отримує руду у вигляді масиву зі строк
+// [
+// ʼ*.**::::**..*::.*…**.*::’ ,
+// ʼ*.**::::**..*::.*…**.*::’ ,
+// ʼ*.**::::**..*::.*…**.*::’ ,
+// ]
+//
+// Перший етап обробки руди - це діставання необхідних елементів з неї.
+//
+// Нас цікавить:
+// *. Та :
+//
+// З трьох поєднань *. робиться одна така частина смартфону _
+//
+// З двох поєднань : робиться така |
+//
+// На виході, треба показати смартфони, що зробила наша фабрика та їх кількість.
+//
+// |_| |_| |_| - 3 смартфони
+//
+//
+// Необхідно створити масив руди. Тип даних List<String> та написати логіку її обробки.
+//
+// Якщо руди недостатньо для виробництва хоча б одного смартфону, мають бути помилки
+//
+// Задачу треба розбити на функції
+//
+//
+//
+// Без налл сейфті
+// Без ООП
+// Без глобальних та статичних змінних (за виключенням констант)
 
 void main() {
-  // TODO: Rename firstDetailCount
-  int firstDetail = findDetail(inputData, '*', '.');
-  // TODO: Rename firstDetailCount
-  int secondDetail = findDetail(inputData, ':', null);
+  int firstDetailCount = getDetailsCount(inputData, '*', '.');
+  int secondDetail = getDetailsCount(inputData, ':', null);
+  int phoneCount = calculatePhoneCount(firstDetailCount, secondDetail);
 
   // TODO: Make user friendly.
-  print(firstDetail);
-  print(secondDetail);
 
-  int phoneCount = createPhone(firstDetail, secondDetail);
-  print('Phone created is $phoneCount');
+  print('З цієї руди\n $inputData');
+  print('Ми отримали кількість деталей першого типу $firstDetailCount шт.');
+  print('Ми отримали кількість деталей другого типу $secondDetail шт.');
+  print('Зможемо зробити телефонів $phoneCount ');
 }
 
 const inputData = [
@@ -20,29 +52,29 @@ const inputData = [
   '*.**::::**..*::.*…**.*::',
 ];
 
-// TODO: Rename getDetailsCount
-// TODO: Rename firstDetailChar
-// TODO: Rename secondDetailChar
-int findDetail(List<String> inputData, String firstDetailPart, String? secondDetailPart) {
+int getDetailsCount(List<String> inputData, String firstDetailPart, String? secondDetailPart) {
   int counter = 0;
-  String firstChar;
-  String secondChar;
+  String firstDetailChar;
+  String secondDetailChar;
 
   assert(firstDetailPart.length == 1, 'Use one symbol');
 
   for (String dataPart in inputData) {
-    // TODO: Reactor range
-    for (int i = 0; i < dataPart.length - 1; i++) {
+    for (int i = 0; i < dataPart.length; i++) {
       if (secondDetailPart == null) {
-        firstChar = dataPart[i];
-        if (firstChar == firstDetailPart) {
+        firstDetailChar = dataPart[i];
+        if (firstDetailChar == firstDetailPart) {
           counter++;
         }
       } else {
-        firstChar = dataPart[i];
-        secondChar = dataPart[i + 1];
-        if (firstChar == firstDetailPart && secondChar == secondDetailPart) {
-          counter++;
+        try {
+          firstDetailChar = dataPart[i];
+          secondDetailChar = dataPart[i + 1];
+          if (firstDetailChar == firstDetailPart && secondDetailChar == secondDetailPart) {
+            counter++;
+          }
+        } catch (e) {
+          return counter;
         }
       }
     }
@@ -50,8 +82,7 @@ int findDetail(List<String> inputData, String firstDetailPart, String? secondDet
   return counter;
 }
 
-// TODO: calculatePhoneCount
-int createPhone(int firstDetailCount, int secondDetailCount) {
+int calculatePhoneCount(int firstDetailCount, int secondDetailCount) {
   int phoneCount = 0;
   bool cheker = true;
 
