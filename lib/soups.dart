@@ -83,9 +83,9 @@
 import 'dart:io';
 
 void main() {
-  var mainData = addUserMenu();
+  final Map<String, Map<int, List<int>>> mainData = addUserMenu();
   String userName = mainData.keys.first;
-  var data = convertIdToNameOfDish(mainData, userName, dishData);
+  var data = convertIdToNameOfDishForUser(mainData, userName, dishData);
   programMenu(data);
 }
 
@@ -158,10 +158,11 @@ void programMenu(Map<int, List<String>> data) {
     if (userChoice != null) {
       switch (userChoice) {
         case 1:
-          calculateSoupsByDay(soupCountData);
+          showMenuByWeek(soupCountData);
           break;
         case 2:
-          showCountAndAdsSoup(soupCountData);
+          Map<String, int> favoriteSoupForAds = showSoupStatic(soupCountData);
+          showSoupAds(favoriteSoupForAds);
           break;
         case 3:
           isRun = false;
@@ -173,7 +174,6 @@ void programMenu(Map<int, List<String>> data) {
   }
 }
 
-//DATA
 Map<int, String> dishData = {
   1: '«Борщ»',
   2: '«Солянка»',
@@ -194,8 +194,7 @@ Map<String, String> adsDishTexts = {
   '«Суп-пюре з гарбуза»': 'Оксамитовий смак осені!',
 };
 
-//Stat
-Map<int, List<String>> convertIdToNameOfDish(
+Map<int, List<String>> convertIdToNameOfDishForUser(
   Map<String, Map<int, List<int>>> data,
   String key,
   Map<int, String> dishData,
@@ -208,10 +207,10 @@ Map<int, List<String>> convertIdToNameOfDish(
       int daysCount = userMenu.keys.length;
       for (int i = 1; i <= daysCount; i++) {
         List<int> menuList = userMenu[i]!;
-        for (int k = 0; k <= menuList.length - 1; k++) {
-          int dishID = menuList[k];
+        for (int j = 0; j <= menuList.length - 1; j++) {
+          int dishID = menuList[j];
           String dishName = dishData[dishID]!;
-          dishMenuList.insert(k, dishName);
+          dishMenuList.insert(j, dishName);
         }
         translatedData.putIfAbsent(i, () => []);
         translatedData[i]!.addAll(dishMenuList);
@@ -225,7 +224,7 @@ Map<int, List<String>> convertIdToNameOfDish(
 
 Map<String, int> calculateDish(Map<int, List<String>> data) {
   Map<String, int> result = {};
-  for (int i = 1; i <= data.keys.length; i++) {
+  for (int i = 0; i <= data.keys.length; i++) {
     if (data[i] != null) {
       List<String> dishList = data[i]!;
       for (int k = 0; k <= dishList.length - 1; k++) {
@@ -241,7 +240,8 @@ Map<String, int> calculateDish(Map<int, List<String>> data) {
   return result;
 }
 
-void showCountAndAdsSoup(Map<String, int> result) {
+Map<String, int> showSoupStatic(Map<String, int> result) {
+  Map<String, int> favoriteSoup = {};
   print('Статистика вибору супів:\n');
   int maxValue = 0;
   String maxKey = '';
@@ -252,16 +252,33 @@ void showCountAndAdsSoup(Map<String, int> result) {
       maxKey = k;
     }
   });
-  print('          РЕКЛАМА!              \n');
+  favoriteSoup[maxKey] = maxValue;
+  return favoriteSoup;
+}
+
+void showSoupAds(Map<String, int> favoriteSoup) {
+  if (favoriteSoup.keys.length > 1) {
+    return;
+  }
+  String maxKey = favoriteSoup.keys.first;
+  int count = 0;
+  if (favoriteSoup.containsKey(maxKey)) {
+    count = favoriteSoup[maxKey]!;
+  } else {
+    print('Key Error in ads');
+    count = 0;
+  }
+
+  print("          РЕКЛАМА!              \n");
   print('+----------------------------------+');
   print('|    НАЙПОПУЛЯРНІШИЙ СУП ДНЯ       |');
   print('|Назва: $maxKey');
-  print('|Выбрано разів: $maxValue');
+  print('|Выбрано разів: $count');
   print('|Опис:${adsDishTexts[maxKey]}');
   print('+----------------------------------+');
 }
 
-void calculateSoupsByDay(Map<String, int> soupData) {
+void showMenuByWeek(Map<String, int> soupData) {
   Map<String, String> soupByDay = {
     'Понеділок': '',
     'Вівторок': '',
@@ -272,7 +289,17 @@ void calculateSoupsByDay(Map<String, int> soupData) {
     'Неділя': '',
   };
   List<MapEntry<String, int>> sortedEntry = soupData.entries.toList();
-  sortedEntry.sort((a, b) => b.value.compareTo(a.value));
+
+  for (int i = 0; i < sortedEntry.length - 1; i++) {
+    for (int j = 0; j < sortedEntry.length - i - 1; j++) {
+      if (sortedEntry[j].value < sortedEntry[j + 1].value) {
+        MapEntry<String, int> temp = sortedEntry[j];
+        sortedEntry[j] = sortedEntry[j + 1];
+        sortedEntry[j + 1] = temp;
+      }
+    }
+  }
+
   List<String> sortedSoupsByFrequency = sortedEntry.map((e) => e.key).toList();
   int index = 0;
   for (String day in soupByDay.keys) {
