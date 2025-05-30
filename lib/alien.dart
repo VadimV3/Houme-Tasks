@@ -87,4 +87,12 @@
 // і як усе закінчилося.
 //
 //
-void main() {}
+import 'package:phone_factory/classes/Ship.dart';
+import 'package:phone_factory/classes/hint.dart';
+
+void main() {
+  Ship ship = Ship();
+  print(ship.getSpaceShipBays());
+  Hint hint = Hint(currentBayNumber: 3);
+  hint.getHint();
+}
