@@ -13,8 +13,8 @@ class Ship {
   }
 
   int countOfBays = 10;
-  int countOfAntidots = 3;
-  int aliensCountBay = 3;
+  int countOfAntidots = 2;
+  int aliensCountBay = 1;
   int counfOfHintsBay = 3;
   int countMutantBay = 1;
   int countGoalMissionBay = 1;
@@ -23,7 +23,7 @@ class Ship {
 
   final Map<int, BayItem> _spaceShipBays = {};
 
-  Map<int, dynamic> getSpaceShipBays() {
+  Map<int, BayItem> getSpaceShipBays() {
     return _spaceShipBays;
   }
 

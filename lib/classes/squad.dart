@@ -9,17 +9,12 @@ class Squad {
   int _captain = 1;
   int _squad = 3;
   int _antidotCount = 1;
-  int _incfectedTeamMember = 0;
 
-  int getSquadMemmbersCount() {
-    return _squad;
-  }
+  int get squadMembersCount => _squad;
+  int get antidotCount => _antidotCount;
+  int get capatin => _captain;
 
-  void addAntidot() {
-    _antidotCount += 1;
-  }
-
-  void setSquadMembers(int newValue) {
+  set squadMembers(int newValue) {
     if ((_squad - newValue) >= 0) {
       _squad -= newValue;
     }
@@ -31,7 +26,7 @@ class Squad {
     }
   }
 
-  int getCaptein() {
-    return _captain;
+  void addAntidot() {
+    _antidotCount += 1;
   }
 }

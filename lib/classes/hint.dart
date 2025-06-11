@@ -3,11 +3,11 @@ import 'dart:math';
 import 'package:phone_factory/classes/Ship.dart';
 import 'package:phone_factory/classes/bay_item.dart';
 
-class Hint {
+class HintGenerator {
   int _currentBayNumber;
   Ship ship = Ship();
 
-  Hint({required int currentBayNumber}) : _currentBayNumber = currentBayNumber;
+  HintGenerator({required int currentBayNumber}) : _currentBayNumber = currentBayNumber;
 
   void getHint() {
     Map<int, dynamic> baysData = ship.getSpaceShipBays();
@@ -16,9 +16,8 @@ class Hint {
     Random random = Random();
     int randomBayIndex = random.nextInt(alloweBaysList.length);
     int randomAllowedBay = alloweBaysList[randomBayIndex];
-    BayItem randomBay = baysData[randomAllowedBay];
 
-    switch (randomBay) {
+    switch (baysData[randomAllowedBay]) {
       case BayItem.hint:
         print('В відсіку номер $randomAllowedBay є підказка');
         break;

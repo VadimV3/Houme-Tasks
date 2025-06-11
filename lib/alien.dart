@@ -87,12 +87,13 @@
 // і як усе закінчилося.
 //
 //
-import 'package:phone_factory/classes/Ship.dart';
-import 'package:phone_factory/classes/hint.dart';
+import 'package:phone_factory/classes/game.dart';
 
 void main() {
-  Ship ship = Ship();
-  print(ship.getSpaceShipBays());
-  Hint hint = Hint(currentBayNumber: 3);
-  hint.getHint();
+  Game game = Game();
+  bool isEndGame = true;
+  while (isEndGame) {
+    game.playTurn();
+    isEndGame = game.checkEndGame();
+  }
 }
