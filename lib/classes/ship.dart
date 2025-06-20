@@ -5,7 +5,6 @@ import 'package:phone_factory/classes/bay_item.dart';
 class Ship {
   Ship() {
     _fillSpaceShipBays();
-    //TODO remove print
     print(_baysData);
   }
 
