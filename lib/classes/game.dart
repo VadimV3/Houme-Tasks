@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:phone_factory/classes/Ship.dart';
 import 'package:phone_factory/classes/bay_item.dart';
-import 'package:phone_factory/classes/hint.dart';
+import 'package:phone_factory/classes/hint_generator/hint_generator.dart';
 import 'package:phone_factory/classes/squad.dart';
 
 import 'game_constants.dart';
@@ -12,7 +12,6 @@ import 'game_constants.dart';
 
 class Game {
   Ship ship = Ship();
-  late Map<int, BayItem> baysData;
 
   Squad squad = Squad();
   BayItem bayType = BayItem.mutant;
@@ -20,16 +19,13 @@ class Game {
   Map<int, int> infectedSquads = {};
   int _currentBayNumber = 0;
   bool isGoal = false;
-
-  Game() {
-    baysData = ship.getSpaceShipBays();
-  }
+  bool createdMutant = false;
 
   int _showGameMenuAndUserChoiceHandler() {
     print('----------------------Ігрове меню---------------');
     print('Щоб вибрати відсік натисніть 1');
     print('Використати Антидот натисніть 2');
-    print('Завершити хід натисніть 3');
+    print('Статус Команди 3');
     print('-------------------------------------------------');
 
     String? choice = stdin.readLineSync();
@@ -42,7 +38,7 @@ class Game {
 
   void _showNumberBays() {
     List<int> bays = [];
-    for (int bayNumber in ship.getSpaceShipBays().keys) {
+    for (int bayNumber in ship.baysData.keys) {
       bays.add(bayNumber);
     }
     print('Ваші відсіки: $bays');
@@ -54,7 +50,7 @@ class Game {
       print('Введіть номер відсіка: ');
 
       bayNumber = _userIputHandler();
-      if (ship.getSpaceShipBays().containsKey(bayNumber)) {
+      if (ship.baysData.containsKey(bayNumber)) {
         _currentBayNumber = bayNumber;
         return bayNumber;
       } else {
@@ -74,34 +70,28 @@ class Game {
 
   void _checkTypeOfBay(int numberOfBay) {
     //TODO check type of bay and return result add fucntions to handlle this
-    BayItem? choosenBay = baysData[numberOfBay]!;
+    BayItem? choosenBay = ship.baysData[numberOfBay]!;
     switch (choosenBay) {
       case BayItem.mutant:
         _handleMutantBay();
-        print('Mutant bay');
         break;
       case BayItem.empty:
         _handleEmptyBay();
-        print('Empty bay');
         break;
       case BayItem.hint:
         _handleHintBay();
-        print('Hint bay');
         break;
       case BayItem.infected:
         _handleInfectedBay();
-        print('infected bay');
         break;
       case BayItem.goal:
         _handleGoalBay();
-        print('Goal bay');
         break;
       case BayItem.antidote:
         _handleAntidotBay();
-        print('Antidot bay');
         break;
     }
-    baysData.remove(numberOfBay);
+    ship.removeBayByNumber(numberOfBay);
   }
 
   void playTurn() {
@@ -117,8 +107,10 @@ class Game {
         endMove();
         break;
       case 2:
+        squad.useAntidot();
         break;
       case 3:
+        squad.showSquadCondition();
         break;
       default:
         print('Помилка вводу меню');
@@ -139,7 +131,7 @@ class Game {
     print('+++++++++++Відсік з мутантом++++++++++++++++');
     final random = Random();
     int captWinScore = 0;
-    int squadWinScore = (squad.squadMembersCount * 17);
+    int squadWinScore = (squad.squad.length * 17);
     if (squad.capatin < 0) {
       captWinScore = 40;
     }
@@ -147,7 +139,7 @@ class Game {
     int chance = (random.nextDouble() * 100).toInt();
 
     if (chance > winScore) {
-      _wasInfected();
+      squad.wasInfected();
       print('Ви програли бій з мутантом');
     } else {
       print('Ви виграли бій з мутантом');
@@ -157,11 +149,14 @@ class Game {
 
   void _handleHintBay() {
     print('Ви отримали підказку!');
-    HintGenerator hint = HintGenerator(currentBayNumber: _currentBayNumber);
-    hint.getHint();
+    HintGenerator hintGenerator = HintGenerator();
+    print(hintGenerator.getHint(ship.baysData));
   }
 
-  void _handleInfectedBay() {}
+  void _handleInfectedBay() {
+    print('Ви зайшли в інфікований відсік!!');
+    squad.wasInfected();
+  }
 
   void _handleGoalBay() {
     isGoal = true;
@@ -187,20 +182,6 @@ class Game {
     return true;
   }
 
-  void _wasInfected() {
-    if (squad.squadMembersCount > 0) {
-      if (infectedSquads.isNotEmpty) {
-        int existOneKey = infectedSquads.keys.first;
-        if (existOneKey != 0) {
-          infectedSquads[existOneKey + 1] = 0;
-          squad.squadMembers = 1;
-        }
-      } else {
-        infectedSquads[1] = 0;
-      }
-    }
-  }
-
   void _searchBay() {
     final rnd = Random();
     double chance = rnd.nextDouble();
@@ -213,21 +194,25 @@ class Game {
   }
 
   void endMove() {
-    _checkAndCountInfectedToMutant();
+    //_checkAndCountInfectedToMutant();
+    createdMutant = squad.isMemberMutant();
+    if (createdMutant == true) {
+      _mutantPlaceInBay();
+    }
     gameMove++;
   }
 
-  void _checkAndCountInfectedToMutant() {
-    if (infectedSquads.isNotEmpty) {
-      for (int moveCount in infectedSquads.values) {
-        moveCount += 1;
-        if (moveCount == 2) {
-          Map<int, dynamic> bays = ship.getSpaceShipBays();
-          for (BayItem bay in bays.values) {
-            if (bay == BayItem.empty) {
-              bay = BayItem.mutant;
-            }
-          }
+  void _mutantPlaceInBay() {
+    if (ship.baysData.containsValue(BayItem.values)) {
+      for (int bayKey in ship.baysData.keys) {
+        if (ship.baysData[bayKey] == BayItem.empty) {
+          ship.baysData[bayKey] = BayItem.mutant;
+        }
+      }
+    } else {
+      for (int bayKey in ship.baysData.keys) {
+        if (ship.baysData[bayKey] != BayItem.goal) {
+          ship.baysData[bayKey] = BayItem.mutant;
         }
       }
     }

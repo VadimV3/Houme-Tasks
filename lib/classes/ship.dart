@@ -3,48 +3,50 @@ import 'dart:math';
 import 'package:phone_factory/classes/bay_item.dart';
 
 class Ship {
-  static final Ship _instance = Ship._internal();
-
-  factory Ship() {
-    return _instance;
-  }
-  Ship._internal() {
+  Ship() {
     _fillSpaceShipBays();
+    //TODO remove print
+    print(_baysData);
   }
 
   int countOfBays = 10;
   int countOfAntidots = 2;
-  int aliensCountBay = 1;
+  int mutantCountBay = 1;
   int counfOfHintsBay = 3;
   int countMutantBay = 1;
   int countGoalMissionBay = 1;
   int countEmptyBays = 2;
   BayItem item = BayItem.empty;
 
-  final Map<int, BayItem> _spaceShipBays = {};
+  final Map<int, BayItem> _baysData = {};
 
-  Map<int, BayItem> getSpaceShipBays() {
-    return _spaceShipBays;
+  Map<int, BayItem> get baysData => _baysData;
+
+  void removeBayByNumber(int bayNumber) {
+    _baysData.remove(bayNumber);
   }
 
   BayItem? _getRandomBay() {
     final random = Random();
     List<BayItem> availableItems = List.from(BayItem.values);
 
-    if (aliensCountBay <= 0) {
+    if (mutantCountBay == 0) {
       availableItems.remove(BayItem.infected);
     }
-    if (counfOfHintsBay <= 0) {
+    if (counfOfHintsBay == 0) {
       availableItems.remove(BayItem.hint);
     }
-    if (countOfAntidots <= 0) {
+    if (countOfAntidots == 0) {
       availableItems.remove(BayItem.antidote);
     }
-    if (countGoalMissionBay <= 0) {
+    if (countGoalMissionBay == 0) {
       availableItems.remove(BayItem.goal);
     }
-    if (countMutantBay <= 0) {
+    if (countMutantBay == 0) {
       availableItems.remove(BayItem.mutant);
+    }
+    if (countEmptyBays == 0) {
+      availableItems.remove(BayItem.empty);
     }
 
     if (availableItems.isEmpty) {
@@ -54,7 +56,7 @@ class Ship {
 
     switch (item) {
       case BayItem.infected:
-        aliensCountBay -= 1;
+        mutantCountBay -= 1;
         break;
       case BayItem.hint:
         counfOfHintsBay -= 1;
@@ -78,7 +80,7 @@ class Ship {
     for (var i = 1; i <= countOfBays; i++) {
       BayItem? item = _getRandomBay();
       if (item != null) {
-        _spaceShipBays[i] = item;
+        _baysData[i] = item;
       } else {
         print('Error with items');
       }
