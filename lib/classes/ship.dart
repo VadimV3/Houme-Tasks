@@ -25,8 +25,55 @@ class Ship {
     _baysData.remove(bayNumber);
   }
 
+  void placeMutantInBay() {
+    if (baysData.containsValue(BayItem.empty)) {
+      for (int bayKey in baysData.keys) {
+        if (baysData[bayKey] == BayItem.empty) {
+          baysData[bayKey] = BayItem.mutant;
+          break;
+        }
+      }
+    } else {
+      for (int bayKey in baysData.keys) {
+        if (baysData[bayKey] != BayItem.goal) {
+          baysData[bayKey] = BayItem.mutant;
+          break;
+        }
+      }
+    }
+  }
+
   BayItem? _getRandomBay() {
+    List<BayItem> availableItems = _getAvailableBayItems();
+    if (availableItems.isEmpty) {
+      return null;
+    }
     final random = Random();
+    BayItem item = availableItems[random.nextInt(availableItems.length)];
+
+    switch (item) {
+      case BayItem.infected:
+        mutantCountBay--;
+        break;
+      case BayItem.hint:
+        counfOfHintsBay--;
+        break;
+      case BayItem.empty:
+        countEmptyBays--;
+        break;
+      case BayItem.antidote:
+        countOfAntidots--;
+        break;
+      case BayItem.goal:
+        countGoalMissionBay--;
+      case BayItem.mutant:
+        countMutantBay--;
+        break;
+    }
+    return item;
+  }
+
+  List<BayItem> _getAvailableBayItems() {
     List<BayItem> availableItems = List.from(BayItem.values);
 
     if (mutantCountBay == 0) {
@@ -47,32 +94,7 @@ class Ship {
     if (countEmptyBays == 0) {
       availableItems.remove(BayItem.empty);
     }
-
-    if (availableItems.isEmpty) {
-      return null;
-    }
-    BayItem item = availableItems[random.nextInt(availableItems.length)];
-
-    switch (item) {
-      case BayItem.infected:
-        mutantCountBay -= 1;
-        break;
-      case BayItem.hint:
-        counfOfHintsBay -= 1;
-        break;
-      case BayItem.empty:
-        countEmptyBays -= 1;
-        break;
-      case BayItem.antidote:
-        countOfAntidots -= 1;
-        break;
-      case BayItem.goal:
-        countGoalMissionBay -= 1;
-      case BayItem.mutant:
-        countMutantBay -= 1;
-        break;
-    }
-    return item;
+    return availableItems;
   }
 
   void _fillSpaceShipBays() {

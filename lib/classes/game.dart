@@ -5,21 +5,20 @@ import 'package:phone_factory/classes/Ship.dart';
 import 'package:phone_factory/classes/bay_item.dart';
 import 'package:phone_factory/classes/hint_generator/hint_generator.dart';
 import 'package:phone_factory/classes/squad.dart';
+import 'package:phone_factory/classes/squad_members/captain.dart';
+import 'package:phone_factory/classes/squad_members/squad_member.dart';
 
 import 'game_constants.dart';
 
-//todo 1 fix big create bays, need check exacly count type of bbays, 2 fix hints, some time get empry hint
-
 class Game {
   Ship ship = Ship();
+  Captain captain = Captain();
 
   Squad squad = Squad();
   BayItem bayType = BayItem.mutant;
   int gameMove = 0;
   Map<int, int> infectedSquads = {};
-  int _currentBayNumber = 0;
   bool isGoal = false;
-  bool createdMutant = false;
 
   int _showGameMenuAndUserChoiceHandler() {
     print('----------------------Ігрове меню---------------');
@@ -51,7 +50,6 @@ class Game {
 
       bayNumber = _userIputHandler();
       if (ship.baysData.containsKey(bayNumber)) {
-        _currentBayNumber = bayNumber;
         return bayNumber;
       } else {
         print('Невірний номер відсіка');
@@ -69,7 +67,6 @@ class Game {
   }
 
   void _checkTypeOfBay(int numberOfBay) {
-    //TODO check type of bay and return result add fucntions to handlle this
     BayItem? choosenBay = ship.baysData[numberOfBay]!;
     switch (choosenBay) {
       case BayItem.mutant:
@@ -110,7 +107,7 @@ class Game {
         squad.useAntidot();
         break;
       case 3:
-        squad.showSquadCondition();
+        squad.showCondition();
         break;
       default:
         print('Помилка вводу меню');
@@ -130,16 +127,15 @@ class Game {
   void _handleMutantBay() {
     print('+++++++++++Відсік з мутантом++++++++++++++++');
     final random = Random();
-    int captWinScore = 0;
-    int squadWinScore = (squad.squad.length * 17);
-    if (squad.capatin < 0) {
-      captWinScore = 40;
+    int winScore = 0;
+    int squadWinScore = (squad.members.length * 17);
+    if (captain.isLive) {
+      winScore = captain.winScore + squadWinScore;
     }
-    int winScore = captWinScore + squadWinScore;
     int chance = (random.nextDouble() * 100).toInt();
 
     if (chance > winScore) {
-      squad.wasInfected();
+      squad.infectMember();
       print('Ви програли бій з мутантом');
     } else {
       print('Ви виграли бій з мутантом');
@@ -155,7 +151,7 @@ class Game {
 
   void _handleInfectedBay() {
     print('Ви зайшли в інфікований відсік!!');
-    squad.wasInfected();
+    squad.infectMember();
   }
 
   void _handleGoalBay() {
@@ -170,7 +166,7 @@ class Game {
   }
 
   bool checkEndGame() {
-    if (squad.capatin == 0 && squad.squadMembersCount == 0) {
+    if (squad.capatin == 0 && squad.members.isEmpty) {
       print('Вы програли. Всі члени ікіпажу мертві!');
       return false;
     }
@@ -185,7 +181,7 @@ class Game {
   void _searchBay() {
     final rnd = Random();
     double chance = rnd.nextDouble();
-    if (chance >= chanseToFindAntidot) {
+    if (chance >= chanceToFindAntidot) {
       squad.addAntidot();
       print('Ви знайшли Антідот.');
     } else {
@@ -194,27 +190,25 @@ class Game {
   }
 
   void endMove() {
-    //_checkAndCountInfectedToMutant();
-    createdMutant = squad.isMemberMutant();
-    if (createdMutant == true) {
-      _mutantPlaceInBay();
-    }
+    _processMembersInfection();
     gameMove++;
   }
 
-  void _mutantPlaceInBay() {
-    if (ship.baysData.containsValue(BayItem.values)) {
-      for (int bayKey in ship.baysData.keys) {
-        if (ship.baysData[bayKey] == BayItem.empty) {
-          ship.baysData[bayKey] = BayItem.mutant;
-        }
-      }
-    } else {
-      for (int bayKey in ship.baysData.keys) {
-        if (ship.baysData[bayKey] != BayItem.goal) {
-          ship.baysData[bayKey] = BayItem.mutant;
+  void _processMembersInfection() {
+    for (SquadMember member in squad.members) {
+      if (member.isInfected) {
+        if (member.countDaysInfected < daysToMutant) {
+          member.countDaysInfected++;
+        } else {
+          _createMutantFromMember(member);
         }
       }
     }
+  }
+
+  void _createMutantFromMember(SquadMember member) {
+    squad.members.remove(member);
+    print('Увага!! Один з членів єкіпажу перетворився на мутанта!!!');
+    ship.placeMutantInBay();
   }
 }
